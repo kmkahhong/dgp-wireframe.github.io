@@ -1429,7 +1429,7 @@ $axure.internal(function($ax) {
     };
 
     //relative to the parent
-    $ax.public.fn.offsetBoundingRect = function (ignoreRotation) {
+    $ax.public.fn.offsetBoundingRect = function (ignoreRotation, ignoreOuterShadow) {
         var elementId = this.getElementIds()[0];
         if (!elementId) return undefined;
         
@@ -1458,7 +1458,7 @@ $axure.internal(function($ax) {
 
             var oShadow = style.outerShadow;
 
-            if (oShadow.on) {
+            if (oShadow.on && !ignoreOuterShadow) {
                 if (oShadow.offsetX < 0) {
                     position.left += oShadow.offsetX;
                     position.left -= oShadow.blurRadius;
@@ -1509,7 +1509,7 @@ $axure.internal(function($ax) {
 
             var oShadow = style.outerShadow;
 
-            if (oShadow.on) {
+            if (oShadow.on && !ignoreOuterShadow) {
                 if (oShadow.offsetX < 0) size.width -= oShadow.offsetX;
                 else size.width += oShadow.offsetX;
                 if (oShadow.offsetY < 0) size.height -= oShadow.offsetY;
@@ -1637,8 +1637,8 @@ $axure.internal(function($ax) {
         return _populateBoundingRect(boundingRect);
     }
 
-    $ax.public.fn.size = function () {
-        var boundingRect = this.offsetBoundingRect(true);
+    $ax.public.fn.size = function ({ ignoreRotation = true, ignoreOuterShadow = true } = {}) {
+        var boundingRect = this.offsetBoundingRect(ignoreRotation, ignoreOuterShadow);
         return boundingRect ? boundingRect.size : undefined;
 
         //var firstId = this.getElementIds()[0];
