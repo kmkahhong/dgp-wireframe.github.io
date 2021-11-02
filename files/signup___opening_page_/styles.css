@@ -1091,33 +1091,3 @@
   word-wrap:break-word;
   text-transform:none;
 }
-#u178_img {
-  border-width:0px;
-  position:absolute;
-  left:0px;
-  top:0px;
-  width:59px;
-  height:15px;
-}
-#u178 {
-  border-width:0px;
-  position:absolute;
-  left:773px;
-  top:546px;
-  width:59px;
-  height:15px;
-  display:flex;
-}
-#u178 .text {
-  position:absolute;
-  align-self:center;
-  padding:2px 2px 2px 2px;
-  box-sizing:border-box;
-  width:100%;
-}
-#u178_text {
-  border-width:0px;
-  word-wrap:break-word;
-  text-transform:none;
-  visibility:hidden;
-}
