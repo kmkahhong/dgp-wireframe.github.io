@@ -880,6 +880,20 @@ $axure.internal(function ($ax) {
                     });
                 }
 
+                if(!ANDROID) {
+                    inputJobj.bind('keydown', function() {
+                        if(!dObj.HideHintOnFocused) {
+                            var id = this.id;
+                            var inputIndex = id.indexOf('_input');
+                            if(inputIndex == -1) return;
+                            var inputId = id.substring(0, inputIndex);
+
+                            if(!$ax.placeholderManager.isActive(inputId)) return;
+                            $ax.placeholderManager.updatePlaceholder(inputId, false, true);
+                        }
+                    });
+                }
+
                 $ax.placeholderManager.registerPlaceholder(elementId, dObj.placeholderText, inputJobj.attr('type') == 'password');
                 $ax.placeholderManager.updatePlaceholder(elementId, !($jobj($ax.repeater.applySuffixToElementId(elementId, '_input')).val()));
             }
@@ -1636,17 +1650,22 @@ $axure.internal(function ($ax) {
     $ax.event.raiseErrorEvents = _raiseErrorEvents;
 
     var _raiseSyntheticEvent = function (elementId, eventName, skipShowDescription, eventInfo, nonSynthetic) {
-        if ($ax.style.IsWidgetDisabled(elementId)) return;
+        if ($ax.style.IsWidgetDisabled(elementId) && _shouldStopOnDisabledWidget(eventName)) return;
         // Empty string used when this is an event directly on the page.
         var dObj = elementId === '' ? $ax.pageData.page : $ax.getObjectFromElementId(elementId);
         var axEventObject = dObj && dObj.interactionMap && dObj.interactionMap[eventName];
-        if(!axEventObject) return;
-
+        if (!axEventObject) return;
+        
         eventInfo = eventInfo || $ax.getEventInfoFromEvent($ax.getjBrowserEvent(), skipShowDescription, elementId);
         //        $ax.recording.maybeRecordEvent(elementId, eventInfo, axEventObject, new Date().getTime());
         _handleEvent(elementId, eventInfo, axEventObject, false, !nonSynthetic);
     };
     $ax.event.raiseSyntheticEvent = _raiseSyntheticEvent;
+
+    var _shouldStopOnDisabledWidget = function (eventName) {
+        var blackList = ["onLongClick"];
+        return blackList.some(x => x === eventName);
+    }
 
     var _hasSyntheticEvent = function(scriptId, eventName) {
         var dObj = $ax.getObjectFromScriptId(scriptId);

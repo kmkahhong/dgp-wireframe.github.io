@@ -112,6 +112,7 @@ $axure.internal(function($ax) {
 
         var obj = $ax.getObjectFromScriptId(repeaterId);
         var propMap = obj.repeaterPropMap;
+        var previousItemCount = _repeaterManager.getItemCount(repeaterId);
 
         //If there is no wrap, then set it to be above the number of rows
         var viewId = $ax.adaptive.currentViewId || '';
@@ -319,9 +320,14 @@ $axure.internal(function($ax) {
         $ax.messageCenter.startCombineEventMessages();
         $ax.cacheRepeaterInfo(repeaterId, $ax.getWidgetInfo(repeaterId));
 
+        //RP-1824 The Item Loaded interaction does not fire when last item of repeater is deleted
+        //Fire item looded event when all items are removed
+        var currentItemCount = _repeaterManager.getItemCount(repeaterId);
+        var deleteLastItems = previousItemCount > 0 && currentItemCount === 0;
+
         //$ax.style.startSuspendTextAlignment();
         // Now load
-        for(pos = start; pos < end; pos++) {
+        for(pos = start; pos < end || deleteLastItems; pos++) {
             itemId = orderedIds[pos];
             itemElementId = _createElementId(repeaterId, itemId);
             if (!preevalMap[orderedIds[pos]]) {
@@ -333,6 +339,7 @@ $axure.internal(function($ax) {
                 if(wasTracing) $ax.messageCenter.setState('isTracing', wasTracing);
                 $ax.event.raiseSyntheticEvent(itemElementId, 'onItemLoad', true);
             }
+            deleteLastItems = false;
             $ax.loadDynamicPanelsAndMasters(obj.objects, path, itemId);
         }
         //$ax.style.resumeSuspendTextAlignment();

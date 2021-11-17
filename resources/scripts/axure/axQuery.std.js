@@ -441,7 +441,8 @@ $axure.internal(function($ax) {
         var cursorOffset = { x: 0, y: 0 };
 
         var element = $ax('#' + elementId);
-        var dynamicPanelParents = element.getParents(true, 'dynamicPanel')[0];
+        // element.getParents returns undefined if it has no parents
+        var dynamicPanelParents = element.getParents(true, 'dynamicPanel')[0] || [];
         // repeater can be only one
         var repeaterParents = element.getParents(false, 'repeater');
         var relativeLocationParents = dynamicPanelParents.concat(repeaterParents);

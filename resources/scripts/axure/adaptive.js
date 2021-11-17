@@ -330,7 +330,8 @@
             if (img) return img;
         }
         // check for the default state style
-        const defaultStateImage = findImage(images, scriptId, state);
+        // try to find an image for the default state or for the highest priority state if no default was found. RP-1854
+        const defaultStateImage = findImage(images, scriptId, state) || findImage(images, scriptId, overrideState);
         if (defaultStateImage) return defaultStateImage;
         
         if(doNotDecomposeState) return undefined;
